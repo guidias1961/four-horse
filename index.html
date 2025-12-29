@@ -18,12 +18,11 @@
             padding: 0;
             background: var(--bg);
             color: white;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            scroll-behavior: smooth;
+            font-family: 'Inter', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Video Background - O "Coração" do site */
+        /* Video de fundo ocupando tudo */
         .video-bg {
             position: fixed;
             top: 0;
@@ -32,11 +31,11 @@
             height: 100%;
             z-index: -2;
             object-fit: cover;
-            filter: brightness(0.3) contrast(1.2);
+            filter: brightness(0.35) contrast(1.2);
         }
 
-        /* Camada Danmaku (Estilo Bilibili) */
-        #danmaku-layer {
+        /* Camada Danmaku (Bullet Hell de comentarios) */
+        #danmaku-container {
             position: fixed;
             top: 0;
             left: 0;
@@ -47,33 +46,33 @@
             overflow: hidden;
         }
 
-        .danmaku-msg {
+        .danmaku-item {
             position: absolute;
             white-space: nowrap;
             font-weight: 900;
-            font-size: 1.5rem;
-            text-shadow: 2px 2px 10px rgba(0,0,0,1);
-            animation: slide linear forwards;
-            opacity: 0.8;
+            text-shadow: 2px 2px 8px rgba(0,0,0,1);
+            animation: moveDanmaku linear forwards;
+            font-family: 'Arial Black', sans-serif;
+            text-transform: uppercase;
         }
 
-        @keyframes slide {
+        @keyframes moveDanmaku {
             from { transform: translateX(100vw); }
-            to { transform: translateX(-100%); }
+            to { transform: translateX(-150%); }
         }
 
-        /* Navbar com Seletor de Idioma */
+        /* UI Principal */
         .navbar {
             display: flex;
             justify-content: space-between;
             padding: 15px 5%;
             align-items: center;
-            backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 77, 0, 0.3);
-            background: rgba(0,0,0,0.5);
+            border-bottom: 1px solid var(--fire);
         }
 
         .nav-logo { width: 45px; height: 45px; border-radius: 50%; border: 1px solid var(--fire); }
@@ -84,72 +83,50 @@
             border: none;
             padding: 10px 20px;
             cursor: pointer;
-            font-weight: 900;
+            font-weight: bold;
             border-radius: 2px;
-            text-transform: uppercase;
-            transition: 0.3s;
         }
 
-        .lang-btn:hover { background: var(--gold); color: black; }
-
-        /* Hero Section */
         .hero {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            padding: 80px 20px;
-            min-height: 70vh;
+            padding: 60px 20px;
         }
 
         .hero-banner {
             width: 100%;
-            max-width: 700px;
-            box-shadow: 0 0 60px rgba(255, 77, 0, 0.4);
-            margin-bottom: 30px;
-            border-radius: 4px;
+            max-width: 750px;
+            box-shadow: 0 0 40px rgba(255, 77, 0, 0.5);
+            margin-bottom: 25px;
         }
 
-        .title { font-size: clamp(3rem, 10vw, 5.5rem); color: var(--fire); margin: 0; text-shadow: 0 0 30px var(--fire); font-weight: 900; }
+        .title { font-size: 4.5rem; color: var(--fire); margin: 0; text-shadow: 0 0 20px var(--fire); }
 
-        .ticker { color: var(--gold); font-size: 1.8rem; font-weight: bold; margin-bottom: 30px; letter-spacing: 2px; }
-
-        /* Ação */
-        .btn-group { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
 
         .btn {
-            padding: 20px 50px;
+            padding: 20px 40px;
             text-decoration: none;
             font-weight: 900;
-            text-transform: uppercase;
+            border-radius: 2px;
             transition: 0.2s;
-            display: inline-block;
         }
 
-        .btn-buy { background: var(--fire); color: white; border: none; }
-        .btn-x { background: transparent; border: 2px solid white; color: white; }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 25px var(--fire); }
+        .btn-buy { background: var(--fire); color: white; }
+        .btn-x { border: 2px solid white; color: white; }
 
-        /* Narrativa */
-        .narrative-box {
-            max-width: 850px;
-            margin: 60px auto;
-            padding: 50px;
-            background: rgba(0,0,0,0.9);
-            border: 1px solid rgba(255, 77, 0, 0.3);
-            border-left: 6px solid var(--fire);
-            line-height: 1.8;
-            position: relative;
+        /* Narrative Section */
+        .narrative-section {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: rgba(0,0,0,0.8);
+            border-left: 5px solid var(--fire);
         }
 
-        .narrative-box h2 { color: var(--fire); font-size: 2.2rem; margin-top: 0; text-transform: uppercase; }
-        .narrative-box p { color: #eee; font-size: 1.15rem; margin-bottom: 20px; }
-
-        footer { text-align: center; padding: 50px; opacity: 0.4; font-size: 0.8rem; letter-spacing: 1px; }
-
-        /* Esconder conteúdos de idioma */
-        .hidden { display: none !important; }
-
+        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -158,17 +135,17 @@
         <source src="1.mp4" type="video/mp4">
     </video>
 
-    <div id="danmaku-layer"></div>
+    <div id="danmaku-container"></div>
 
     <nav class="navbar">
-        <img src="logo.png" class="nav-logo" alt="4Horse">
-        <button class="lang-btn" onclick="toggleLang()" id="langSwitcher">中文 / English</button>
+        <img src="logo.png" class="nav-logo">
+        <button class="lang-btn" onclick="toggleLang()">EN / 中文</button>
     </nav>
 
     <section class="hero">
-        <img src="banner.png" class="hero-banner" alt="Banner">
+        <img src="banner.png" class="hero-banner">
         <h1 class="title">FOUR HORSE</h1>
-        <div class="ticker">$4HORSE</div>
+        <div style="color:var(--gold); font-size: 1.5rem; font-weight: bold;">$4HORSE</div>
 
         <div class="btn-group">
             <a href="https://four.meme/" target="_blank" class="btn btn-buy">BUY ON FOUR.MEME</a>
@@ -176,69 +153,50 @@
         </div>
     </section>
 
-    <section class="narrative-box">
-        <div id="text-en">
+    <section class="narrative-section">
+        <div id="en-content">
             <h2>The Fire Horse Prophecy</h2>
-            <p>In the depths of the Chinese zodiac, the **Fire Horse (Bing Wu)** emerges only once every 60 years. It is a sign of intense, unstoppable energy and global transformation. The last cycle was 1966; the next is 2026. We are the frontrun.</p>
-            <p>To dominate the digital age, the Fire Horse has evolved into an omniscient entity: **The Four-Headed CZ**. While the masses succumb to FUD, the 4-headed stallion gazes in all directions, embodying the ultimate decree: **Ignore FUD, Ignore Fake News, Ignore Attacks, Ignore Distractions.**</p>
-            <p>This is not just a token. It is a technological totem for the 2026 super-cycle. Join the dynasty.</p>
+            <p>Every 60 years, the Fire Horse returns to reset the cycle. In 2026, it manifests as the 4-headed CZ. Ignore the FUD. Follow the 4.</p>
         </div>
-
-        <div id="text-zh" class="hidden">
+        <div id="zh-content" class="hidden">
             <h2>火马预言</h2>
-            <p>在中国生肖的深处，**火马（丙午）**每60年才出现一次。它是剧烈、不可阻挡的能量和全球变革的标志。上一个周期是1966年；下一个是2026年。我们是先锋。</p>
-            <p>为了统治数字时代，火马进化成了一个全知的实体：**四头CZ**。当大众屈服于FUD时，四头骏马向四面八方注视，体现了终极法令：**无视FUD，无视假新闻，无视攻击，无视分心。**</p>
-            <p>这不仅仅是一个代币。它是2026年超级周期的技术图腾。加入王朝。</p>
+            <p>每 60 年，火马就会回归并重置周期。2026 年，它体现为四头 CZ。无视 FUD。遵循 4。</p>
         </div>
     </section>
 
-    <footer>
-        © 2026 THE FIRE HORSE DYNASTY | $4HORSE | BUILT FOR THE ASIAN LIQUIDITY ASCENSION
-    </footer>
-
     <script>
-        // Sistema Danmaku (Comentários que cruzam a tela)
-        const msgsEn = ["IGNORE FUD", "CZ IS BACK", "4444", "2026 IS OURS", "HODL THE FIRE", "SAFU", "4 HEADS > 1"];
-        const msgsZh = ["忽略 FUD", "CZ 回来了", "4444", "2026 是我们的", "握住火", "安全", "四头胜一头"];
-        let currentLang = 'en';
+        const messagesEn = ["IGNORE FUD", "CZ IS BACK", "4444", "2026 IS OURS", "HODL THE FIRE", "SAFU", "4 HEADS > 1"];
+        const messagesZh = ["忽略 FUD", "CZ 回来了", "4444", "2026 是我们的", "握住火", "安全", "四头胜一头"];
+        let lang = 'en';
 
-        function createDanmaku() {
+        function spawnDanmaku() {
+            const container = document.getElementById('danmaku-container');
             const el = document.createElement('div');
-            el.className = 'danmaku-msg';
-            const pool = currentLang === 'en' ? msgsEn : msgsZh;
+            el.className = 'danmaku-item';
+            
+            const pool = lang === 'en' ? messagesEn : messagesZh;
             el.innerText = pool[Math.floor(Math.random() * pool.length)];
             
-            // Estética de fogo aleatória
-            el.style.top = Math.random() * 85 + 5 + '%';
-            el.style.color = Math.random() > 0.6 ? '#ff4d00' : '#ffcc00';
+            // Randomize vertical position, size and color
+            el.style.top = Math.random() * 90 + '%';
+            el.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+            el.style.color = Math.random() > 0.5 ? '#ff4d00' : '#ffcc00';
             
-            // Velocidade variada para parecer "caos orgânico"
-            const duration = Math.random() * 7 + 4;
+            // Randomize speed for "chaos" feel
+            const duration = Math.random() * 6 + 3;
             el.style.animationDuration = duration + 's';
             
-            document.getElementById('danmaku-layer').appendChild(el);
-            
-            // Remove do DOM após a animação para não pesar
+            container.appendChild(el);
             setTimeout(() => el.remove(), duration * 1000);
         }
 
-        // Gera uma nova mensagem a cada 400ms
-        setInterval(createDanmaku, 400);
+        // Frequencia alta para estilo Bilibili
+        setInterval(spawnDanmaku, 350);
 
-        // Troca de Idioma
         function toggleLang() {
-            const en = document.getElementById('text-en');
-            const zh = document.getElementById('text-zh');
-            
-            if (currentLang === 'en') {
-                en.classList.add('hidden');
-                zh.classList.remove('hidden');
-                currentLang = 'zh';
-            } else {
-                en.classList.remove('hidden');
-                zh.classList.add('hidden');
-                currentLang = 'en';
-            }
+            lang = lang === 'en' ? 'zh' : 'en';
+            document.getElementById('en-content').classList.toggle('hidden');
+            document.getElementById('zh-content').classList.toggle('hidden');
         }
     </script>
 </body>
